@@ -1,5 +1,3 @@
-# Makefile for a Go project
-
 # Go parameters
 GO        := go
 GOBUILD   := $(GO) build

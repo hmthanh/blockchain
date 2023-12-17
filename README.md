@@ -1,4 +1,4 @@
-# Blockchain Project from scatch by Golang
+# Blockchain Project from scratch by Golang
 
 A simple blockchain project from scratch by Golang
 
@@ -16,7 +16,6 @@ make run
 ```bash
 make build
 ```
-
 
 ## Test
 
