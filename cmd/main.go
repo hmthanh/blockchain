@@ -1,26 +1,20 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/hmthanh/blockchain/pkg/blockchain"
+	bcn "github.com/hmthanh/blockchain/pkg/blockchain"
 )
 
 func main() {
-	data := "Hello, SH33A"
+	// Create a new blockchain
+	blockchain := bcn.NewBlockChain()
 
-	// hash := sha256.New()
-	// hash.Write([]byte(data))
+	// Add transactions and blocks
+	transaction1 := &bcn.Transaction{Data: []byte("Alex -> Bob, 100 BTC")}
+	transaction2 := &bcn.Transaction{Data: []byte("Bob -> Alex, 50 BTC")}
 
-	// hashValue := hash.Sum(nil)
+	blockchain.AddBlock([]*bcn.Transaction{transaction1})
+	blockchain.AddBlock([]*bcn.Transaction{transaction2})
 
-	// hashString := hex.EncodeToString(hashValue)
-
-	dataBytes := []byte(data)
-	trans := []*blockchain.Transaction{
-		&blockchain.Transaction{Data: dataBytes}, &blockchain.Transaction{Data: dataBytes},
-	}
-	res := blockchain.HashTransactions(trans)
-	fmt.Print(res)
-
+	// Print the blockchain
+	blockchain.PrintBlockchain()
 }
