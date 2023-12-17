@@ -4,7 +4,7 @@ GOBUILD   := $(GO) build
 GOTEST    := $(GO) test
 GOCLEAN   := $(GO) clean
 GOGET     := $(GO) get
-BINARY    := blockchain
+BINARY    := ./bin/$(shell basename $(CURDIR))
 MAIN      := ./cmd/main.go
 
 all: build
