@@ -1,6 +1,8 @@
 package blockchain
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Blockchain struct {
 	blocks []*Block
@@ -16,12 +18,11 @@ func (bc *Blockchain) AddBlock(transaction []*Transaction) {
 	prevBlock := bc.blocks[len(bc.blocks)-1]
 
 	// new block
-	newBlock := CreateNewBlock(prevBlock.Hash, transaction)
-	SetHash(newBlock)
+	newBlock := CreateBlock(transaction, prevBlock.Hash)
+	newBlock.SetHash()
 
 	// append new block to blockchain
 	bc.blocks = append(bc.blocks, newBlock)
-
 }
 
 // Prints the details of the blockchain.

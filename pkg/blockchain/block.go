@@ -3,7 +3,7 @@ package blockchain
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"strconv"
+	"fmt"
 	"time"
 )
 
@@ -19,41 +19,46 @@ type Transaction struct {
 }
 
 func CreateGenesisBlock() *Block {
-	currentTimestamp := time.Now().Unix()
-
 	return &Block{
-		Timestamp:     currentTimestamp,
+		Timestamp:     time.Now().Unix(),
 		Transactions:  []*Transaction{},
 		PrevBlockHash: []byte{},
 		Hash:          []byte{},
 	}
 }
 
-func CreateNewBlock(prev []byte, trans []*Transaction) *Block {
-	currentTimestamp := time.Now().Unix()
-
-	return &Block{
-		Timestamp:     currentTimestamp,
-		Transactions:  trans,
-		PrevBlockHash: prev,
+func CreateBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
+	block := &Block{
+		Timestamp:     time.Now().Unix(),
+		Transactions:  transactions,
+		PrevBlockHash: prevBlockHash,
 		Hash:          []byte{},
 	}
+	block.SetHash()
+	return block
 }
 
-func SetHash(b *Block) {
+func HashTransactions(trans []*Transaction) []byte {
+	var transactionData []byte
+	for _, tran := range trans {
+		transactionData = append(transactionData, tran.Data...)
+	}
+
+	hash := sha256.Sum256(transactionData)
+	return hash[:]
+}
+
+func (b *Block) SetHash() {
 	var bytesData []byte
-	// fmt.Printf("\nkkkkkkkkkkkkkknkkkkkkkkkkkkkk: %x\n\n", b.PrevBlockHash)
 
 	// PrevBlockHash
 	bytesData = append(bytesData, b.PrevBlockHash...)
 
 	// Transactions
-	for _, tran := range b.Transactions {
-		bytesData = append(bytesData, tran.Data...)
-	}
+	bytesData = append(bytesData, HashTransactions(b.Transactions)...)
 
 	// Timestamp
-	bytesData = append(bytesData, []byte(strconv.FormatInt(b.Timestamp, 10))...)
+	bytesData = append(bytesData, []byte(fmt.Sprint(b.Timestamp))...)
 
 	// Calculate hash
 	hashBytes := sha256.Sum256(bytesData)

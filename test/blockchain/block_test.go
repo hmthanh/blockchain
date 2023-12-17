@@ -2,37 +2,72 @@ package main
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
-	"strconv"
+	"fmt"
+	"reflect"
 	"testing"
 
 	bcn "github.com/hmthanh/blockchain/pkg/blockchain"
 )
 
-func TestSetHash(t *testing.T) {
-	// Create a sample block
-	block := &bcn.Block{
-		Timestamp:     1702810000,
-		Transactions:  []*bcn.Transaction{{Data: []byte("test data")}},
-		PrevBlockHash: []byte("previous_hash"),
+func TestBlockchain(t *testing.T) {
+	// Create Genesis Block
+	genesisBlock := bcn.CreateGenesisBlock()
+
+	// Ensure the Genesis Block has the expected values
+	if genesisBlock.Timestamp <= 0 {
+		t.Error("Genesis Block timestamp should be greater than 0")
 	}
 
-	// Call SetHash to set the Hash field
-	bcn.SetHash(block)
+	if len(genesisBlock.Transactions) != 0 {
+		t.Error("Genesis Block should have no transactions")
+	}
 
-	// Calculate the expected hash manually
+	if len(genesisBlock.PrevBlockHash) != 0 {
+		t.Error("Genesis Block's Previous Block Hash should be empty")
+	}
+
+	if len(genesisBlock.Hash) != 0 {
+		t.Error("Genesis Block's Hash should be empty")
+	}
+
+	// Create Transactions
+	transactions := []*bcn.Transaction{
+		{Data: []byte("Transaction 1")},
+		{Data: []byte("Transaction 2")},
+	}
+
+	// Create a new Block
+	prevBlockHash := genesisBlock.Hash
+	newBlock := bcn.CreateBlock(transactions, prevBlockHash)
+
+	// Ensure the new Block has the expected values
+	if newBlock.Timestamp <= 0 {
+		t.Error("New Block timestamp should be greater than 0")
+	}
+
+	if !reflect.DeepEqual(newBlock.Transactions, transactions) {
+		t.Error("New Block should have the same transactions as provided")
+	}
+
+	if !reflect.DeepEqual(newBlock.PrevBlockHash, prevBlockHash) {
+		t.Error("New Block's Previous Block Hash should match the provided value")
+	}
+
+	if len(newBlock.Hash) == 0 {
+		t.Error("New Block's Hash should not be empty")
+	}
+
+	// Ensure the Hash of the Block is correctly set
+	hashTrans := bcn.HashTransactions(transactions)
 	var bytesData []byte
-	bytesData = append(bytesData, block.PrevBlockHash...)
+	bytesData = append(bytesData, prevBlockHash...)
+	bytesData = append(bytesData, hashTrans...)
+	bytesData = append(bytesData, []byte(fmt.Sprint(newBlock.Timestamp))...)
 
-	for _, tran := range block.Transactions {
-		bytesData = append(bytesData, tran.Data...)
-	}
-	bytesData = append(bytesData, []byte(strconv.FormatInt(block.Timestamp, 10))...)
-	expectedHashBytes := sha256.Sum256(bytesData)
-	expectedHash := hex.EncodeToString(expectedHashBytes[:])
+	// append(prevBlockHash, append(expectedHash, []byte(fmt.Sprint(newBlock.Timestamp)))...)
 
-	// Check if the calculated hash matches the expected hash
-	if block.Hash == nil || hex.EncodeToString(block.Hash) != expectedHash {
-		t.Errorf("SetHash failed. Expected hash: %s, actual hash: %s", expectedHash, hex.EncodeToString(block.Hash))
+	expectedHash := sha256.Sum256(bytesData)
+	if !reflect.DeepEqual(newBlock.Hash, expectedHash[:]) {
+		t.Error("New Block's Hash is not set correctly")
 	}
 }
