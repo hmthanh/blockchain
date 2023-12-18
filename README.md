@@ -19,6 +19,21 @@ make build
 
 ## Test
 
+Using Makefile
+
 ```bash
 make test
+```
+
+or
+
+```bash
+go test ./...
+```
+
+## Public
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
 ```

@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"fmt"
+	"time"
 )
 
 type Blockchain struct {
@@ -28,7 +29,7 @@ func (bc *Blockchain) AddBlock(transaction []*Transaction) {
 // Prints the details of the blockchain.
 func (bc *Blockchain) PrintBlockchain() {
 	for _, block := range bc.blocks {
-		fmt.Printf("Timestamp: %d\n", block.Timestamp)
+		fmt.Printf("Timestamp: %d (%s)\n", block.Timestamp, time.Unix(block.Timestamp, 0).Format("2006-01-02 15:04:05"))
 		fmt.Printf("PrevBlockHash: %x\n", block.PrevBlockHash)
 		fmt.Printf("Hash: %x\n", block.Hash)
 		fmt.Println("Transactions:")
