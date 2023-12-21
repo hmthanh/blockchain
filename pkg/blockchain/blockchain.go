@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"bytes"
 	"fmt"
 	"time"
 )
@@ -24,6 +25,19 @@ func (bc *Blockchain) AddBlock(transaction []*Transaction) {
 
 	// append new block to blockchain
 	bc.blocks = append(bc.blocks, newBlock)
+}
+
+func (bc *Blockchain) VerifyBlockchain() bool {
+	for i := 1; i < bc.GetBlockCount(); i++ {
+		currBlock := bc.GetBlock(i)
+		prevBlock := bc.GetBlock(i - 1)
+
+		isEqual := bytes.Compare(currBlock.PrevBlockHash, prevBlock.Hash) == 0
+		if isEqual == false {
+			return false
+		}
+	}
+	return true
 }
 
 // Prints the details of the blockchain.

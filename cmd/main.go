@@ -17,4 +17,12 @@ func main() {
 
 	// Print the blockchain
 	blockchain.PrintBlockchain()
+
+	// Verify the blockchain
+	isValid := blockchain.VerifyBlockchain()
+	if isValid {
+		println("Blockchain is valid")
+	} else {
+		println("Blockchain is invalid")
+	}
 }
