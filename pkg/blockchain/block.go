@@ -11,6 +11,7 @@ type Block struct {
 	Timestamp     int64
 	Transactions  []*Transaction
 	PrevBlockHash []byte
+	MerkleRoot    []byte
 	Hash          []byte
 }
 
@@ -34,6 +35,7 @@ func CreateBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
 		PrevBlockHash: prevBlockHash,
 		Hash:          []byte{},
 	}
+	block.SetMerkleRoot()
 	block.SetHash()
 	return block
 }

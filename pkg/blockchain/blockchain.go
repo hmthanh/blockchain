@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"fmt"
 	"time"
 )
@@ -38,6 +39,39 @@ func (bc *Blockchain) VerifyBlockchain() bool {
 		}
 	}
 	return true
+}
+
+func (b *Block) SetMerkleRoot() {
+	transactionCount := len(b.Transactions)
+	var merkleTree [][]byte
+
+	// Create leaves of the Merkle Tree
+	for _, tran := range b.Transactions {
+		merkleTree = append(merkleTree, HashTransaction(tran))
+	}
+
+	// Build the Merkle Tree
+	for transactionCount > 1 {
+		var level [][]byte
+		for i := 0; i < transactionCount; i += 2 {
+			// Concatenate and hash pairs of nodes
+			hash := sha256.Sum256(append(merkleTree[i], merkleTree[i+1]...))
+			level = append(level, hash[:])
+		}
+		// If the number of nodes is odd, duplicate the last one
+		if transactionCount%2 == 1 {
+			level = append(level, merkleTree[transactionCount-1])
+		}
+		merkleTree = level
+		transactionCount = (transactionCount + 1) / 2
+	}
+
+	b.MerkleRoot = merkleTree[0]
+}
+
+func HashTransaction(tran *Transaction) []byte {
+	bytesData := sha256.Sum256(tran.Data[:])
+	return bytesData[:]
 }
 
 // Prints the details of the blockchain.

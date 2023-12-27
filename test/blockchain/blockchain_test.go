@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	btn "github.com/hmthanh/blockchain/pkg/blockchain"
+	btn "github.com/hmthanh/blockchain/pkg/simpleblockchain"
 )
 
 func TestNewBlockchain(t *testing.T) {

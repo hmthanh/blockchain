@@ -3,32 +3,34 @@ package main
 import (
 	"fmt"
 
-	btc "github.com/hmthanh/blockchain/pkg/bitcoin"
-	// bcn "github.com/hmthanh/blockchain/pkg/blockchain"
+	btc "github.com/hmthanh/blockchain/pkg/blockchain"
+	bcn "github.com/hmthanh/blockchain/pkg/simpleblockchain"
 )
 
-func main() {
-	// // Create a new blockchain
-	// blockchain := bcn.NewBlockChain()
+func TestSimpleBlockChain() {
+	// Create a new blockchain
+	blockchain := bcn.NewBlockChain()
 
-	// // Add transactions and blocks
-	// transaction1 := &bcn.Transaction{Data: []byte("Alex -> Bob, 100 BTC")}
-	// transaction2 := &bcn.Transaction{Data: []byte("Bob -> Alex, 50 BTC")}
+	// Add transactions and blocks
+	transaction1 := &bcn.Transaction{Data: []byte("Alex -> Bob, 100 BTC")}
+	transaction2 := &bcn.Transaction{Data: []byte("Bob -> Alex, 50 BTC")}
 
-	// blockchain.AddBlock([]*bcn.Transaction{transaction1})
-	// blockchain.AddBlock([]*bcn.Transaction{transaction2})
+	blockchain.AddBlock([]*bcn.Transaction{transaction1})
+	blockchain.AddBlock([]*bcn.Transaction{transaction2})
 
-	// // Print the blockchain
-	// blockchain.PrintBlockchain()
+	// Print the blockchain
+	blockchain.PrintBlockchain()
 
-	// // Verify the blockchain
-	// isValid := blockchain.VerifyBlockchain()
-	// if isValid {
-	// 	println("Blockchain is valid")
-	// } else {
-	// 	println("Blockchain is invalid")
-	// }
+	// Verify the blockchain
+	isValid := blockchain.VerifyBlockchain()
+	if isValid {
+		println("Blockchain is valid")
+	} else {
+		println("Blockchain is invalid")
+	}
+}
 
+func TestMerleTreeBlockChain() {
 	coin := btc.NewBlockChain()
 
 	// Add transactions and blocks
@@ -47,4 +49,8 @@ func main() {
 
 	isValidMerleTree := coin.VerifyBlockchain()
 	fmt.Println("isValidMerleTree : ", isValidMerleTree)
+}
+
+func main() {
+	TestMerleTreeBlockChain()
 }

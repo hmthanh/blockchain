@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	bcn "github.com/hmthanh/blockchain/pkg/blockchain"
+	bcn "github.com/hmthanh/blockchain/pkg/simpleblockchain"
 )
 
 func TestBlockchain(t *testing.T) {
