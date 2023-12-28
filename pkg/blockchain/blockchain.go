@@ -2,7 +2,6 @@ package blockchain
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"fmt"
 	"time"
 )
@@ -28,6 +27,36 @@ func (bc *Blockchain) AddBlock(transaction []*Transaction) {
 	bc.blocks = append(bc.blocks, newBlock)
 }
 
+// func (bc *Blockchain) VerifyMerkleRoot(transactions []*Transaction, merkleRoot []byte) bool {
+
+// 	// Calculate merkle root from transactions
+// 	calculatedMerkleRoot := bc.CalculateMerkleRoot(transactions)
+
+// 	// Compare calculated root to passed in root
+// 	return bytes.Equal(calculatedMerkleRoot, merkleRoot)
+// }
+
+// func VerifyTransaction(transaction *Transaction, merkleRoot []byte) bool {
+
+// 	var hashes [][]byte
+// 	for _, t := range transactions {
+// 		if bytes.Equal(t.Hash, transaction.Hash) {
+// 			hashes = append(hashes, t.Hash)
+// 			break
+// 		}
+// 	}
+
+// 	// Sort hashes
+// 	sort.Slice(hashes, func(i, j int) bool {
+// 		return bytes.Compare(hashes[i], hashes[j]) < 0
+// 	})
+
+// 	// Calculate merkle root from transaction hash
+// 	calculatedMerkleRoot := CalculateMerkleTree(hashes)
+
+// 	return bytes.Equal(calculatedMerkleRoot, merkleRoot)
+// }
+
 func (bc *Blockchain) VerifyBlockchain() bool {
 	for i := 1; i < bc.GetBlockCount(); i++ {
 		currBlock := bc.GetBlock(i)
@@ -41,38 +70,17 @@ func (bc *Blockchain) VerifyBlockchain() bool {
 	return true
 }
 
-func (b *Block) SetMerkleRoot() {
-	transactionCount := len(b.Transactions)
-	var merkleTree [][]byte
+// // verifyMerkleTree verifies if the given Merkle root is valid for the specified transaction.
+// func VerifyMerkleTree(merkleRoot []byte, transactionHashes [][]byte, targetTransactionHash []byte, position int) bool {
+// 	if position < 0 || position >= len(transactionHashes) {
+// 		// Invalid position
+// 		return false
+// 	}
 
-	// Create leaves of the Merkle Tree
-	for _, tran := range b.Transactions {
-		merkleTree = append(merkleTree, HashTransaction(tran))
-	}
-
-	// Build the Merkle Tree
-	for transactionCount > 1 {
-		var level [][]byte
-		for i := 0; i < transactionCount; i += 2 {
-			// Concatenate and hash pairs of nodes
-			hash := sha256.Sum256(append(merkleTree[i], merkleTree[i+1]...))
-			level = append(level, hash[:])
-		}
-		// If the number of nodes is odd, duplicate the last one
-		if transactionCount%2 == 1 {
-			level = append(level, merkleTree[transactionCount-1])
-		}
-		merkleTree = level
-		transactionCount = (transactionCount + 1) / 2
-	}
-
-	b.MerkleRoot = merkleTree[0]
-}
-
-func HashTransaction(tran *Transaction) []byte {
-	bytesData := sha256.Sum256(tran.Data[:])
-	return bytesData[:]
-}
+// 	// Check if the given Merkle root matches the calculated Merkle root for the specified transaction
+// 	calculatedMerkleRoot := CalculateMerkleRoot(transactionHashes, position)
+// 	return fmt.Sprintf("%x", merkleRoot) == fmt.Sprintf("%x", calculatedMerkleRoot)
+// }
 
 // Prints the details of the blockchain.
 func (bc *Blockchain) PrintBlockchain() {

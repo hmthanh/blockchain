@@ -40,17 +40,8 @@ func CreateBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
 	}
 
 	block.SetHash()
+	block.SetMerkleRoot()
 	return block
-}
-
-func HashTransactions(trans []*Transaction) []byte {
-	var transactionData []byte
-	for _, tran := range trans {
-		transactionData = append(transactionData, tran.Data...)
-	}
-
-	hash := sha256.Sum256(transactionData)
-	return hash[:]
 }
 
 func (b *Block) SetHash() {
@@ -75,7 +66,28 @@ func (b *Block) SetHash() {
 	b.Hash = hashBytes[:]
 }
 
-func CalculateMerkleRoot(hashes [][]byte) []byte {
+func HashTransactions(trans []*Transaction) []byte {
+	var transactionData []byte
+	for _, tran := range trans {
+		transactionData = append(transactionData, tran.Data...)
+	}
+
+	hash := sha256.Sum256(transactionData)
+	return hash[:]
+}
+
+func (b *Block) SetMerkleRoot() {
+	var transactionHashes [][]byte
+
+	for _, tran := range b.Transactions {
+		transactionHashes = append(transactionHashes, tran.Hash)
+	}
+
+	merkleRoot := CalculateMerkleTree(transactionHashes)
+	b.MerkleRoot = merkleRoot
+}
+
+func CalculateMerkleTree(hashes [][]byte) []byte {
 	if len(hashes) == 0 {
 		return nil
 	}
@@ -84,21 +96,19 @@ func CalculateMerkleRoot(hashes [][]byte) []byte {
 		return hashes[0]
 	}
 
-	var newHashes [][]byte
+	var merkleTree [][]byte
 
-	// Combine pairs of hashes and hash them together
 	for i := 0; i < len(hashes)-1; i += 2 {
-		combined := append(hashes[i], hashes[i+1]...)
-		hash := sha256.Sum256(combined)
-		newHashes = append(newHashes, hash[:])
+		hash := sha256.Sum256(append(hashes[i], hashes[i+1]...))
+		merkleTree = append(merkleTree, hash[:])
 	}
 
-	// If there's an odd number of hashes, duplicate the last one
-	if len(hashes)%2 == 1 {
-		newHashes = append(newHashes, hashes[len(hashes)-1])
+	// If the number of nodes is odd, duplicate the last one
+	if len(hashes)%2 != 0 {
+		merkleTree = append(merkleTree, hashes[len(hashes)-1])
 	}
 
-	return CalculateMerkleRoot(newHashes)
+	return CalculateMerkleTree(merkleTree)
 }
 
 func GetHashString(b *Block) string {

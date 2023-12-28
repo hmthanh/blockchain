@@ -47,10 +47,10 @@ func TestMerleTreeBlockChain() {
 	trans2 = append(trans2, transaction3)
 	coin.AddBlock(trans2)
 
-	isValidMerleTree := coin.VerifyBlockchain()
-	fmt.Println("isValidMerleTree : ", isValidMerleTree)
+	isValidMerkleTree := coin.VerifyBlockchain()
+	fmt.Println("isValidMerkleTree: ", isValidMerkleTree)
 }
 
 func main() {
-	TestMerleTreeBlockChain()
+	TestSimpleBlockChain()
 }
