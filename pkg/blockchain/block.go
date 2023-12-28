@@ -17,6 +17,7 @@ type Block struct {
 
 type Transaction struct {
 	Data []byte
+	Hash []byte
 }
 
 func CreateGenesisBlock() *Block {
@@ -24,6 +25,7 @@ func CreateGenesisBlock() *Block {
 		Timestamp:     time.Now().Unix(),
 		Transactions:  []*Transaction{},
 		PrevBlockHash: []byte{},
+		MerkleRoot:    []byte{},
 		Hash:          []byte{},
 	}
 }
@@ -33,9 +35,10 @@ func CreateBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
 		Timestamp:     time.Now().Unix(),
 		Transactions:  transactions,
 		PrevBlockHash: prevBlockHash,
+		MerkleRoot:    []byte{},
 		Hash:          []byte{},
 	}
-	block.SetMerkleRoot()
+
 	block.SetHash()
 	return block
 }
@@ -56,8 +59,11 @@ func (b *Block) SetHash() {
 	// PrevBlockHash
 	bytesData = append(bytesData, b.PrevBlockHash...)
 
+	// MerkleRoot
+	bytesData = append(bytesData, b.MerkleRoot...)
+
 	// Transactions
-	bytesData = append(bytesData, HashTransactions(b.Transactions)...)
+	// bytesData = append(bytesData, HashTransactions(b.Transactions)...)
 
 	// Timestamp
 	bytesData = append(bytesData, []byte(fmt.Sprint(b.Timestamp))...)
@@ -65,7 +71,34 @@ func (b *Block) SetHash() {
 	// Calculate hash
 	hashBytes := sha256.Sum256(bytesData)
 
+	// block.SetMerkleRoot()
 	b.Hash = hashBytes[:]
+}
+
+func CalculateMerkleRoot(hashes [][]byte) []byte {
+	if len(hashes) == 0 {
+		return nil
+	}
+
+	if len(hashes) == 1 {
+		return hashes[0]
+	}
+
+	var newHashes [][]byte
+
+	// Combine pairs of hashes and hash them together
+	for i := 0; i < len(hashes)-1; i += 2 {
+		combined := append(hashes[i], hashes[i+1]...)
+		hash := sha256.Sum256(combined)
+		newHashes = append(newHashes, hash[:])
+	}
+
+	// If there's an odd number of hashes, duplicate the last one
+	if len(hashes)%2 == 1 {
+		newHashes = append(newHashes, hashes[len(hashes)-1])
+	}
+
+	return CalculateMerkleRoot(newHashes)
 }
 
 func GetHashString(b *Block) string {
