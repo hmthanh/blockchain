@@ -29,3 +29,8 @@ test.main
 
 # bin
 bin
+
+
+.env/
+venv/
+.github/
