@@ -1,7 +1,19 @@
-# This template is a low-dependency template. 
-# By default there is no requirements added here.
-# Add the requirements you need to this file.
-# or run `make init` to create this file automatically based on the template.
-# You can also run `make switch-to-poetry` to use the poetry package manager.
-
-bitcoin=
+autopep8==2.0.4
+bitcoin==1.1.42
+bitcoinlib==0.6.13
+certifi==2023.11.17
+charset-normalizer==3.3.2
+ecdsa==0.18.0
+fastecdsa==2.3.0
+greenlet==3.0.3
+idna==3.6
+numpy==1.26.3
+pep8==1.7.1
+pycodestyle==2.11.1
+pycryptodome==3.19.1
+requests==2.31.0
+six==1.16.0
+SQLAlchemy==2.0.25
+tomli==2.0.1
+typing_extensions==4.9.0
+urllib3==2.1.0

@@ -115,6 +115,9 @@ switch-to-poetry: ## Switch to poetry package manager.
 init:             ## Initialize the project based on an application template.
 	@./.github/init.sh
 
+.PHONY: dev
+dev:          ## Create a new tag for release.
+	@python bitcoin/__main__.py
 
 # This project has been generated from rochacbruno/python-project-template
 # __author__ = 'rochacbruno'

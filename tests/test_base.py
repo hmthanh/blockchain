@@ -1,4 +1,4 @@
-from bitcoin.base import NAME
+from main.base import NAME
 
 
 def test_base():

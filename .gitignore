@@ -34,3 +34,7 @@ bin
 .env/
 venv/
 .github/
+site/
+site
+__pycache__
+
